@@ -28,8 +28,8 @@ services:
     build:
       context: .
     hostname: worker
-    entrypoint: celery
-    command: -A celery worker --loglevel=info
+    entrypoint: celery_task
+    command: -A celery_task worker --loglevel=info
     volumes:
       - .:/app
     links:
