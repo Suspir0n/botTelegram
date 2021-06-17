@@ -1,14 +1,8 @@
-from flask import Blueprint, jsonify, current_app
+from flask import Blueprint, jsonify
 from ..controllers import user_controller
-from ..bot.auth import auth
 
-current_app.config['CORS_HEADERS'] = 'Content-Type'
 bp_users = Blueprint('users', __name__)
 
-
-@bp_users.route('/auth', methods=['POST'])
-def authenticate():
-    return auth()
 
 @bp_users.route('/', methods=['GET'])
 def root():
@@ -25,8 +19,8 @@ def get_user(uid):
 
 
 @bp_users.route('/users', methods=['POST'])
-def post_user():
-    return user_controller.post_user()
+def post_user(data):
+    return data, user_controller.post_user()
 
 
 @bp_users.route('/users/<uid>', methods=['DELETE'])
