@@ -1,5 +1,12 @@
 flask==2.0.1
 amqp==5.0.6
 celery==5.1.0
-pytest
+pytest==6.1.2
 behave
+python_telegram_bot==13.6
+flask-sqlalchemy==2.5.1
+pymysql==1.0.2
+flask-marshmallow==0.14.0
+jsonmix
+mysql-connector==2.2.9
+requests==2.25.1

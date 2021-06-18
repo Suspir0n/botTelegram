@@ -1,0 +1,66 @@
+User: API
+
+API:
+Envio de Dados
+* Verificar se o json é valido
+	COMO
+           uma api  
+	EU QUERO
+	   registrar um dado
+	PARA
+	   CENARIO 1
+		DADO
+		   que possuo o json válido
+		QUANDO
+		   irei registrar
+		ENTÃO
+		   devo registrar no banco com sucesso
+	   CENARIO 2
+		DADO
+		   que possuo o json inválido
+		QUANDO
+		   irei registrar
+		ENTÃO
+		   devo receber um erro informando qual o problema
+
+Rotas
+* Verificar se metodo da rota é valido
+	COMO
+           uma api  
+	EU QUERO
+	   registrar/obter um dado
+	PARA
+	   CENARIO 1
+		DADO
+		   que possuo o metodo da rota válido
+		QUANDO
+		   irei registrar/obter
+		ENTÃO
+		   devo registrar/obter no/do banco com sucesso
+	   CENARIO 2
+		DADO
+		   que possuo o metodo da rota inválido
+		QUANDO
+		   irei registrar/obter
+		ENTÃO
+		   devo receber um erro informando qual o problema
+* Verificar se a rota é valida
+	COMO
+           uma api  
+	EU QUERO
+	   registrar um dado
+	PARA
+	   CENARIO 1
+		DADO
+		   que possuo a rota válido
+		QUANDO
+		   irei registrar/obter
+		ENTÃO
+		   devo registrar/obter no/do banco com sucesso
+	   CENARIO 2
+		DADO
+		   que possuo a rota inválido
+		QUANDO
+		   irei registrar/obter
+		ENTÃO
+		   devo receber um erro informando qual o problema

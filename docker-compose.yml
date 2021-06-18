@@ -1,53 +1,69 @@
 version: "3.1"
 
 services:
+  bot:
+    container_name: flask_bot
+    labels:
+      project: "flask_api"
+      day: "16 Jun 2021"
+    build:
+      context: .
+      dockerfile: bot.Dockerfile
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/bot
+
   web:
-    hostname: api_bot
+    container_name: flask_app
+    labels:
+      project: "flask_api"
+      day: "16 Jun 2021"
     build:
       context: .
       dockerfile: Dockerfile
     restart: always
+    environment:
+      # set database, memcached etc credentials
+      DB_HOST: mysql
+      DB_NAME: flask
+      DB_USER: flask
+      DB_PASSWORD: slimdingo85
+    links:
+      # network connection with these services
+      - mysql
     ports:
       - "5000:5000"
     depends_on:
-      - rabbit
+      - mysql
+      - bot
     volumes:
       - .:/app
 
-  rabbit:
-    hostname: rabbit
-    image: rabbitmq:management
-    environment:
-      - RABBITMQ_DEFAULT_USER=rabbitmq
-      - RABBITMQ_DEFAULT_PASS=rabbitmq
-    ports:
-      - "5673:5672"
-      - "15672:15672"
-
-  worker:
-    build:
-      context: .
-    hostname: worker
-    entrypoint: celery
-    command: -A celery worker --loglevel=info
+  mysql:
+    container_name: flask_mysql
+    # let's grab from mysql 5.7 image
+    image: mysql:5.7
+    command: --max-allowed-packet=32505856 --wait-timeout=28800
     volumes:
-      - .:/app
-    links:
-      - rabbit
-    depends_on:
-      - rabbit
-
-  db:
-    image: mysql
-    restart: always
+      # pass volume named mysql-data to mysql container
+      - mysql-data:/var/lib/mysql
+    restart: unless-stopped
+    labels:
+      project: "flask_api"
+      day: "16 Jun 2021"
+    # ports:
+    #   - "3306:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: example
-      MYSQL_USER: suspiron
-      MYSQL_PASSWORD: example
-      MYSQL_DATABASE: api_bot
+      # credentials
+      MYSQL_ROOT_PASSWORD: slimdingo85
+      MYSQL_DATABASE: flask
+      MYSQL_USER: flask
+      MYSQL_PASSWORD: slimdingo85
 
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8080:8080
+# volumes definition here
+volumes:
+  # just a persistance data
+  mysql-data:
+    driver: local
