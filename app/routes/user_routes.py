@@ -1,5 +1,8 @@
 from flask import Blueprint, jsonify
 from ..controllers import user_controller
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
 
 bp_users = Blueprint('users', __name__)
 
@@ -19,8 +22,8 @@ def get_user(uid):
 
 
 @bp_users.route('/users', methods=['POST'])
-def post_user(data):
-    return data, user_controller.post_user()
+def post_user():
+    return user_controller.post_user()
 
 
 @bp_users.route('/users/<uid>', methods=['DELETE'])

@@ -1,47 +1,48 @@
 import logging
-from telegram import Update, ForceReply, KeyboardButton, ReplyKeyboardMarkup, Contact
+from telegram import Update, ForceReply, KeyboardButton, ReplyKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
-from ..settings.config import config_telegram
-from flask import Response, request
+import requests
 from datetime import datetime
-from ..routes.user_routes import post_user
-import json
-
+from settings import TOKEN
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-
 logger = logging.getLogger(__name__)
 
 
-def send_message(username, chat_id):
-    bot_token = config_telegram()
+def send_message(username, chat_id, msg):
+    bot_token = TOKEN
     bot_chatID = chat_id
-    bot_message = f'Hello {username}'
+    bot_message = f'{msg}{username}'
     send_text = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + bot_chatID + '&parse_mode=Markdown&text=' + bot_message
-    return request.get(send_text)
+    response = requests.get(send_text)
+    return response.text
 
 
 def handle_message_request(update: Update, context: CallbackContext):
     contact = update.effective_message.contact
     phone = contact.phone_number
     user = update.effective_user
-    username = user.mention_markdown_v2()
+    profile = user.mention_markdown_v2()
+    name = ''
+    for letter in profile:
+        if letter == ']':
+            break
+        if letter != '[':
+            name += letter
     chat_uid = update.message.chat_id
     mock_request_data = {
-        "uid": 1,
-        "data": {
-            "name": username,
-            "phone": phone,
-            "chat_id": chat_uid,
-        },
-        "date": datetime.now().timestamp()
+        "name": name,
+        "phone": phone,
+        "chat_id": chat_uid
     }
-    json_string = json.dumps(mock_request_data, ensure_ascii=False)
-    reponse = Response(json_string, content_type="application/json; charset=utf-8")
+    response = requests.post('http://host.docker.internal:5000/users', json=mock_request_data)
+    if response.status_code != 201:
+        logging.error('\033[1;31mError during send data to database!\033[m')
+    else:
+        logging.info('\033[1;34mData inserted to database with success\033[m')
     update.message.reply_text(
-        "Thank you!",
+        "Thank you!\nWhat are you doing ?",
         reply_markup=ForceReply(selective=True))
-    return post_user(reponse)
 
 
 def start(update: Update, context: CallbackContext) -> None:
@@ -67,7 +68,7 @@ def help_command(update: Update, context: CallbackContext) -> None:
 def message(update: Update, context: CallbackContext) -> None:
     """Echo the user message."""
     message = get_client_message_response(update.message.text)
-    update.message.reply_text(message + f', seu chat_id: {uid}')
+    update.message.reply_text(message)
 
 
 def get_client_message_response(client_data):
@@ -84,6 +85,9 @@ def search_message(client_message):
         {"how are you?": "I'm me fine, and you?"},
         {"fine too": "Nice Nice Nice"},
         {"what are you doing?": "nothing"},
+        {"nothing": "nice nice"},
+        {"nothing, and you?": "nothing"},
+
     ]
     response = str()
     for value in messages_responses:
@@ -95,8 +99,8 @@ def search_message(client_message):
 
 def main() -> None:
     """Start the bot."""
-    token = config_telegram()
-    updater = Updater(token)
+    logging.info('\033[1;34mInitialization bot\033[m')
+    updater = Updater(TOKEN)
     dispatcher = updater.dispatcher
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(MessageHandler(Filters.contact, handle_message_request))
@@ -104,3 +108,7 @@ def main() -> None:
     dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, message))
     updater.start_polling()
     updater.idle()
+
+
+if __name__ == '__main__':
+    main()
