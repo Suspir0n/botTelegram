@@ -1,0 +1,22 @@
+User: API
+
+API:
+Envio de Dados
+* Verificar se o json é valido
+
+SaveDataTest
+	SUB - Verificar se o json é valido
+		se o json é valido sucesso
+		se o json for invalido deve dar erro
+
+Rotas
+* Verificar se metodo da rota é valido
+* Verificar se a rota é valida
+
+RotasTest
+	SUB - Verificar se metodo da rota é valido
+		se o metodo da rota é valido sucesso
+		se o metodo da rota for invalido deve dar erro
+	SUB - Verificar se a rota é valida
+		se a rota é valido sucesso
+		se a rota for invalido deve dar erro
