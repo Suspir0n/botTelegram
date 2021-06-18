@@ -15,6 +15,7 @@ def secret_key(app):
 
 
 def config_db(app):
+    from ..models import user_model, message_model
     db.init_app(app)
     app.app_context().push()
     db.create_all(app=app)
@@ -26,5 +27,6 @@ def config_ma(app):
 
 
 def config_bp(app):
-    from ..routes import user_routes
+    from ..routes import user_routes, message_routes
     app.register_blueprint(user_routes.bp_users)
+    app.register_blueprint(message_routes.bp_messages)

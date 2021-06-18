@@ -2,15 +2,15 @@ import logging
 from telegram import Update, ForceReply, KeyboardButton, ReplyKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 import requests
-import json
 from datetime import datetime
+from settings import TOKEN
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
 def send_message(username, chat_id, msg):
-    bot_token = '1529947213:AAEbABEEdleAfYpAQYxkuUF4H5L_5-FsLgg'
+    bot_token = TOKEN
     bot_chatID = chat_id
     bot_message = f'{msg}{username}'
     send_text = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + bot_chatID + '&parse_mode=Markdown&text=' + bot_message
@@ -31,14 +31,10 @@ def handle_message_request(update: Update, context: CallbackContext):
             name += letter
     chat_uid = update.message.chat_id
     mock_request_data = {
-        "data": {
-            "name": name,
-            "phone": phone,
-            "chat_id": chat_uid,
-        },
-        "date": datetime.now().timestamp()
+        "name": name,
+        "phone": phone,
+        "chat_id": chat_uid
     }
-    # json_string = json.dumps(mock_request_data, ensure_ascii=False)
     response = requests.post('http://host.docker.internal:5000/users', json=mock_request_data)
     if response.status_code != 201:
         logging.error('\033[1;31mError during send data to database!\033[m')
@@ -104,7 +100,7 @@ def search_message(client_message):
 def main() -> None:
     """Start the bot."""
     logging.info('\033[1;34mInitialization bot\033[m')
-    updater = Updater('1529947213:AAEbABEEdleAfYpAQYxkuUF4H5L_5-FsLgg')
+    updater = Updater(TOKEN)
     dispatcher = updater.dispatcher
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(MessageHandler(Filters.contact, handle_message_request))

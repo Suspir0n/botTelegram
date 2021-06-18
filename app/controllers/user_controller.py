@@ -48,9 +48,9 @@ def validation_fields(name, phone, chat_id):
 
 def got_fields(uid=''):
     logging.info('\033[1;34mGetting fields\033[m')
-    name = request.json['data']['name']
-    phone = request.json['data']['phone']
-    chat_id = request.json['data']['chat_id']
+    name = request.json['name']
+    phone = request.json['phone']
+    chat_id = request.json['chat_id']
     validation_fields(name, phone, chat_id)
     user_update = passed_data_fields_model(uid, name, phone, chat_id)
     user_post = UserModel(name, phone, chat_id)

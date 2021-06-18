@@ -36,42 +36,10 @@ services:
     ports:
       - "5000:5000"
     depends_on:
-      - rabbit
       - mysql
       - bot
     volumes:
       - .:/app
-
-  rabbit:
-    hostname: rabbit
-    container_name: flask_rabbit
-    image: rabbitmq:management
-    labels:
-      project: "flask_api"
-      day: "16 Jun 2021"
-    environment:
-      - RABBITMQ_DEFAULT_USER=rabbitmq
-      - RABBITMQ_DEFAULT_PASS=rabbitmq
-    ports:
-      - "5673:5672"
-      - "15672:15672"
-
-  worker:
-    container_name: flask_celery
-    build:
-      context: .
-    hostname: worker
-    labels:
-      project: "flask_api"
-      day: "16 Jun 2021"
-    entrypoint: celery
-    command: -A worker worker --loglevel=info
-    volumes:
-      - .:/app
-    links:
-      - rabbit
-    depends_on:
-      - rabbit
 
   mysql:
     container_name: flask_mysql
