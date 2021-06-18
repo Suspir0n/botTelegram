@@ -9,10 +9,6 @@ ma = Marshmallow()
 random_str = string.ascii_letters + string.digits + string.ascii_uppercase
 key = ''.join(random.choice(random_str) for i in range(12))
 
-def config_telegram():
-    token = '1529947213:AAEbABEEdleAfYpAQYxkuUF4H5L_5-FsLgg'
-    return token
-
 
 def secret_key(app):
     app.config['SECRET_KEY'] = key
